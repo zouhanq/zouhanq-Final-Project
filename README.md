@@ -1,4 +1,3 @@
-# zouhanq-Final-Project
 # Development of Moving Average Strategies for Quantitative Trading
 
 ## **Project Description**
@@ -19,8 +18,8 @@ The aim of this project is to develop and evaluate a quantitative trading strate
   - **Simple Moving Average (SMA)**: Comparing short-term and long-term SMAs to generate trading signals.
   - **Exponential Moving Average (EMA)**: Using EMA for more responsive signal generation.
   - **Crossover Strategy**: Implementing the Golden Cross/Death Cross strategy (short-term MA crossing over/under long-term MA) to identify potential entry and exit points.
-- Backtest the strategies using historical data to measure profitability, maximum drawdown, Sharpe ratio, and other key performance metrics.
-- The strategy will be refined through iterative adjustments to MA lengths, stop-loss, and take-profit levels.
+  - **Market Conditions**: The SMA and EMA strategies will be tested under trending and range-bound markets to determine which configuration works better under each condition. In trending markets, the crossover strategy might generate more reliable signals, while in range-bound markets, shorter MAs may reduce noise.
+- **Hyperparameter Tuning**: Stop-loss and take-profit levels will be optimized through hyperparameter tuning. This will involve testing different values for MA lengths, stop-loss thresholds, and profit-taking levels to maximize the Sharpe ratio and minimize drawdowns.
 
 ## **Data Visualization**
 - **Performance Metrics**: Visualize the cumulative returns of the strategy compared to a benchmark (e.g., buy-and-hold approach of CSI 300 futures) using line charts.
@@ -32,6 +31,7 @@ The aim of this project is to develop and evaluate a quantitative trading strate
 - **Data Split**: Use historical data from January 2018 to December 2022:
   - **Training Data**: January 2018 to December 2021 (80%)
   - **Testing Data**: January 2022 to December 2022 (20%)
+- **Handling Data Gaps**: Missing data points or anomalies (such as extreme outliers) will be addressed by forward-filling missing values or using statistical methods like interpolation. Significant anomalies will be ignored or flagged for manual review.
 - **Validation**: Evaluate the model's performance using metrics such as annualized return, Sharpe ratio, maximum drawdown, and win rate.
 - **Robustness Testing**: Test the strategy under different market conditions, including bullish, bearish, and sideways trends.
 
