@@ -28,9 +28,9 @@ The aim of this project is to develop and evaluate a quantitative trading strate
 - **Interactive Tools**: Create an interactive dashboard to adjust MA parameters and observe their impact on backtest results.
 
 ## **Test Plan**
-- **Data Split**: Use historical data from January 2018 to December 2022:
-  - **Training Data**: January 2018 to December 2021 (80%)
-  - **Testing Data**: January 2022 to December 2022 (20%)
+- **Data Split**: Use historical data from January 2019 to December 2024:
+  - **Training Data**: January 2020 to December 2022 (80%)
+  - **Testing Data**: January 2023 to October 2024 (20%)
 - **Handling Data Gaps**: Missing data points or anomalies (such as extreme outliers) will be addressed by forward-filling missing values or using statistical methods like interpolation. Significant anomalies will be ignored or flagged for manual review.
 - **Validation**: Evaluate the model's performance using metrics such as annualized return, Sharpe ratio, maximum drawdown, and win rate.
 - **Robustness Testing**: Test the strategy under different market conditions, including bullish, bearish, and sideways trends.
