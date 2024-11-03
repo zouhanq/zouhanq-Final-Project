@@ -1,39 +1,94 @@
-# Development of Moving Average Strategies for Quantitative Trading
+# Regime-Based Moving Average Strategy for CSI 300 Futures
 
-## **Project Description**
-The aim of this project is to develop and evaluate a quantitative trading strategy using Moving Averages (MA) focused on China's stock index futures, specifically the CSI 300 (沪深300). The project will involve backtesting the strategy on historical data and refining the parameters to achieve consistent positive returns. This study will explore various configurations of MA strategies to identify the optimal approach for trading in the CSI 300 futures market.
+## 1. Video Presentation Link
+[YouTube Presentation Link](your_youtube_link_here)
 
-## **Goals**
-- Successfully develop a Moving Average strategy that achieves a positive return on China's stock index futures (CSI 300).
-- Backtest the strategy on historical data to evaluate its effectiveness.
-- Analyze the profitability, risk, and robustness of the strategy under different market conditions.
+---
 
-## **Data Collection**
-- **Data Source**: Historical data of CSI 300 futures will be collected using publicly available datasets from financial data platforms like Wind, CSMAR, or brokerage data services such as OpenCTP, as well as other APIs that provide Chinese stock market data.
-- **Data Frequency**: Minute-level or daily data will be used, depending on the feasibility and computational requirements.
-- **Data Attributes**: OHLC (Open, High, Low, Close), trading volume, and contract-specific details such as expiration date and tick size will be gathered.
+## 2. Preliminary Visualizations
 
+### Cumulative Profit Over Time
+This chart shows the cumulative profit over time for the regime-based moving average strategy. Although initially positive, the performance has been steadily declining, which suggests that the strategy may require further tuning.
+
+![Cumulative Profit](link_to_your_image)
+
+### Market Regimes Detected by K-means
+Using K-means clustering, we identified three distinct market regimes represented by clusters. Each cluster may represent different market conditions, such as trending, mean-reverting, and moderate conditions.
+
+![K-means Clustering](link_to_your_image)
+
+```python
+# Code snippet for visualizations
+
+# Plotting cumulative profit over time
+plt.plot(result['Time'], result['cum_profit'], label='Cumulative Profit')
+plt.xlabel('Time')
+plt.ylabel('Cumulative Profit')
+plt.title('Backtest Performance')
+plt.legend()
+plt.show()
+
+# Plotting K-means clustering results
+plt.scatter(data['svd_component_1'], data['svd_component_2'], c=data['regime'], cmap='viridis')
+plt.colorbar(label='Regime')
+plt.xlabel('SVD Component 1')
+plt.ylabel('SVD Component 2')
+plt.title('Market Regimes Detected by K-means')
+plt.show()
+
+
+## **Data Processing**
+### **Data Loading and Cleaning**
+  - Data Source: Historical price data for CSI 300 futures from East Money.
+  - Cleaning: Checked for NaN values produced during data processing and forward-filled any gaps to ensure continuity.
+### **Feature Engineering**
+  To better understand and respond to market conditions, several technical indicators were added to the dataset:
+    - RSI: Used to gauge overbought and oversold conditions.
+    - Moving Averages (MA): Short (5-period) and Long (10-period) moving averages were used to identify trends.
+    - Bollinger Bands: To detect potential mean-reverting opportunities.
+    - SVD Components: Performed Singular Value Decomposition on key features to reduce dimensionality for clustering.
+### **K-means Clustering for Regime Detection**
+  Using the SVD components, we applied K-means clustering to segment the data into three market regimes:
+    - Regime 0 (Purple Cluster): This regime appears to represent stable, low-volatility conditions.
+    - Regime 1 (Yellow Cluster): Represents higher volatility, potentially trending conditions.
+    - Regime 2 (Teal Cluster): Indicates moderate volatility or mixed conditions.
+  Each row in the dataset was labeled with its corresponding regime, allowing us to apply tailored strategies for each regime type
 ## **Data Modeling Approach**
-- **Trading Strategy**: Implement Moving Average strategies such as:
-  - **Simple Moving Average (SMA)**: Comparing short-term and long-term SMAs to generate trading signals.
-  - **Exponential Moving Average (EMA)**: Using EMA for more responsive signal generation.
-  - **Crossover Strategy**: Implementing the Golden Cross/Death Cross strategy (short-term MA crossing over/under long-term MA) to identify potential entry and exit points.
-  - **Market Conditions**: The SMA and EMA strategies will be tested under trending and range-bound markets to determine which configuration works better under each condition. In trending markets, the crossover strategy might generate more reliable signals, while in range-bound markets, shorter MAs may reduce noise.
-- **Hyperparameter Tuning**: Stop-loss and take-profit levels will be optimized through hyperparameter tuning. This will involve testing different values for MA lengths, stop-loss thresholds, and profit-taking levels to maximize the Sharpe ratio and minimize drawdowns.
+### **Regime-Specific Strategies**
+  Different strategies were implemented for each detected regime:
+    - Trending Regime: In a trending regime, a Moving Average crossover strategy is applied, where buy signals are generated when the short MA crosses above the long MA, and       - sell signals when it crosses below.
+    - Mean-Reverting Regime: Bollinger Bands are used to capture mean-reversion opportunities. Buy signals are generated when the price is below the lower band, and sell      signals when it is above the upper band.
+    - Moderate/Conservative Regime: A more cautious strategy is applied using daily open price and RSI levels to confirm signals.
+### **Signal Generation**
+  For each data point, buy or sell signals are generated based on the detected regime:
 
-## **Data Visualization**
-- **Performance Metrics**: Visualize the cumulative returns of the strategy compared to a benchmark (e.g., buy-and-hold approach of CSI 300 futures) using line charts.
-- **MA Signals**: Overlay MA lines on price charts to show entry and exit points.
-- **Risk Analysis**: Utilize drawdown charts to visualize periods of loss and recovery.
-- **Interactive Tools**: Create an interactive dashboard to adjust MA parameters and observe their impact on backtest results.
+    - If the current regime is trending, signals follow a Moving Average crossover approach.
+    - If the regime is mean-reverting, Bollinger Bands dictate the entry/exit signals.
+    - For moderate regimes, a more conservative approach is taken to minimize risk in uncertain conditions.
+  Each strategy is optimized to align with the characteristics of its respective regime, allowing for a more responsive and potentially profitable trading approach.
 
-## **Test Plan**
-- **Data Split**: Use historical data from January 2019 to December 2024:
-  - **Training Data**: January 2020 to December 2022 (80%)
-  - **Testing Data**: January 2023 to October 2024 (20%)
-- **Handling Data Gaps**: Missing data points or anomalies (such as extreme outliers) will be addressed by forward-filling missing values or using statistical methods like interpolation. Significant anomalies will be ignored or flagged for manual review.
-- **Validation**: Evaluate the model's performance using metrics such as annualized return, Sharpe ratio, maximum drawdown, and win rate.
-- **Robustness Testing**: Test the strategy under different market conditions, including bullish, bearish, and sideways trends.
+
+## **Preliminary Results**
+### **K-means Clustering Results**
+  The K-means clustering produced three distinct regimes. Preliminary analysis suggests that these regimes could correspond to different market conditions, such as trending, mean-reverting, and moderate states. The clustering provides a basis for applying tailored strategies to better align with current market conditions.
+### **Backtest Performance**
+  The cumulative profit over time chart reveals an overall decline in performance, indicating that the strategy may not yet be optimized for each regime. Initial gains were observed, but as the backtest continued, the performance steadily declined. This suggests potential misalignment between the applied strategies and the actual market behavior within each regime.
+### **Challenges and Next Steps**
+  - Challenges:
+      Parameter Tuning: The current parameters for each strategy may not be optimal for the different regimes. Further tuning is necessary to improve performance.
+      Lagging Indicators: Moving averages and other indicators used may have lagged behind rapid market changes, resulting in delayed entries and exits.
+  - Next Steps:
+      Parameter Optimization: We plan to fine-tune the Moving Average window sizes, RSI thresholds, and Bollinger Band widths for each regime.
+      Exploring Additional Features: Considering adding volatility indicators like ATR to better capture market conditions.
+      Enhanced Regime Detection: Experimenting with alternative clustering methods to see if more refined regimes can be identified.
+
+## **Repository Structure and Code**
+  Data Processing: Contains code for loading, cleaning, and feature engineering.
+  Regime Detection: Code for applying K-means clustering and labeling data with regime information.
+  Strategy: Code for the Moving Average strategy and regime-based signal generation.
+  Backtesting: Contains the main backtesting loop and code for calculating cumulative profit and evaluating strategy performance.
 
 ## **GitHub Repository**
 This repository contains all project code, datasets, documentation, and visualization tools. The README.md will be updated regularly to reflect progress and findings.
+
+
