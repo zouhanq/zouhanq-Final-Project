@@ -15,7 +15,7 @@ This chart shows the cumulative profit over time for the regime-based moving ave
 ### Market Regimes Detected by K-means
 Using K-means clustering, we identified three distinct market regimes represented by clusters. Each cluster may represent different market conditions, such as trending, mean-reverting, and moderate conditions.
 
-![K-means Clustering](images/Figure_2.png)
+![K-means Clustering](images/Figure_1.png)
 
 ```python
 # Code snippet for visualizations
