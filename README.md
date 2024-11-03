@@ -17,7 +17,7 @@ Using K-means clustering, we identified three distinct market regimes represente
 
 ![K-means Clustering](link_to_your_image)
 
-```python
+```
 # Code snippet for visualizations
 
 # Plotting cumulative profit over time
