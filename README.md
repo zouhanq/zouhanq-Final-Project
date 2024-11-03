@@ -10,12 +10,12 @@
 ### Cumulative Profit Over Time
 This chart shows the cumulative profit over time for the regime-based moving average strategy. Although initially positive, the performance has been steadily declining, which suggests that the strategy may require further tuning.
 
-![Cumulative Profit](link_to_your_image)
+![Cumulative Profit](images/Figure_2.png)
 
 ### Market Regimes Detected by K-means
 Using K-means clustering, we identified three distinct market regimes represented by clusters. Each cluster may represent different market conditions, such as trending, mean-reverting, and moderate conditions.
 
-![K-means Clustering](link_to_your_image)
+![K-means Clustering](images/Figure_2.png)
 
 ```python
 # Code snippet for visualizations
@@ -96,6 +96,3 @@ The cumulative profit over time chart reveals an overall decline in performance,
    - **Parameter Optimization**: We plan to fine-tune the Moving Average window sizes, RSI thresholds, and Bollinger Band widths for each regime.
    - **Exploring Additional Features**: Considering adding volatility indicators like ATR to better capture market conditions.
    - **Enhanced Regime Detection**: Experimenting with alternative clustering methods to see if more refined regimes can be identified.
-
-
-
