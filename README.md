@@ -36,6 +36,7 @@ plt.ylabel('SVD Component 2')
 plt.title('Market Regimes Detected by K-means')
 plt.show()
 
+```python
 
 ## 3. Data Processing
 
