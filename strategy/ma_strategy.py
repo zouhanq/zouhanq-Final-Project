@@ -24,107 +24,6 @@ def calculate_daily_open(data):
     data['daily_open'] = data.groupby(data.index.date)['open'].transform('first')
     return data
 
-def generate_open_position_signals(data_30min):
-    """Generate open position signals based on the defined strategy."""
-    # Generate buy signals for the first case
-    data_30min['buy_signal_1_1'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['close'] > data_30min['bollinger_mid']),  # Latest price > BOLL(MID)
-        1, 0)
-
-    # Generate buy signals for the second case, Condition 1
-    data_30min['buy_signal_2_1'] = np.where(
-        (data_30min['close'] < data_30min['bollinger_mid']) &  # Latest price < BOLL(MID)
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['short_ma'] > data_30min['long_ma']),  # MA5 > MA10
-        1, 0)
-
-    # Generate buy signals for the second case, Condition 2
-    data_30min['buy_signal_2_2'] = np.where(
-        (data_30min['close'] < data_30min['bollinger_mid']) &  # Latest price < BOLL(MID)
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['close'] >= data_30min['long_ma']) &  # Latest price >= MA10
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['long_ma'] > data_30min['long_ma'].shift(1)),  # MA10 is in an upward trend
-        1, 0)
-
-    # Generate buy signals for the third case
-    data_30min['buy_signal_3'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['close'] >= data_30min['long_ma']) &  # Latest price >= MA10
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)),  # MA5 is in an upward trend
-        1, 0)
-
-    # Generate buy signals for the fourth case, Condition 1
-    data_30min['buy_signal_4_1'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['short_ma'] > data_30min['long_ma']),  # MA5 > MA10
-        1, 0)
-
-    # Generate buy signals for the fourth case, Condition 2
-    data_30min['buy_signal_4_2'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['close'] >= data_30min['long_ma']) &  # Latest price >= MA10
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['long_ma'] > data_30min['long_ma'].shift(1)),  # MA10 is in an upward trend
-        1, 0)
-
-    # Generate buy signals for the fifth case
-    data_30min['buy_signal_5'] = np.where(
-        (data_30min['close'] > data_30min['daily_open']) &  # Latest price > daily open price
-        (data_30min['close'] > data_30min['short_ma']) &  # Latest price > MA5
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['close'] > data_30min['bollinger_upper']) &  # Latest price > BOLL(UPPER)
-        (data_30min['bollinger_width'] >= data_30min['bollinger_width'].shift(30)),  # Bollinger Band width is increasing
-        1, 0)
-
-    # Generate buy signals for the sixth case, Condition 1
-    data_30min['buy_signal_6_1'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['short_ma'] > data_30min['long_ma']),  # MA5 > MA10
-        1, 0)
-
-    # Generate buy signals for the sixth case, Condition 2
-    data_30min['buy_signal_6_2'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['close'] >= data_30min['long_ma']) &  # Latest price >= MA10
-        (data_30min['short_ma'] > data_30min['short_ma'].shift(1)) &  # MA5 is in an upward trend
-        (data_30min['long_ma'] > data_30min['long_ma'].shift(1)),  # MA10 is in an upward trend
-        1, 0)
-
-    # Generate buy signals for the sixth case, Condition 3
-    data_30min['buy_signal_6_3'] = np.where(
-        (data_30min['close'] >= data_30min['short_ma']) &  # Latest price >= MA5
-        (data_30min['close'] >= data_30min['high'].shift(1)),  # Latest price >= highest price of the last 30-minute candle
-        1, 0)
-
-    # Combine buy signals
-    data_30min['buy_signal'] = data_30min[['buy_signal_1_1', 'buy_signal_2_1', 'buy_signal_2_2', 'buy_signal_3', 'buy_signal_4_1', 'buy_signal_4_2', 'buy_signal_5', 'buy_signal_6_1', 'buy_signal_6_2', 'buy_signal_6_3']].max(axis=1)
-
-    # Apply the overall condition for the first four cases
-    overall_condition = (data_30min['close'] > data_30min['daily_avg']) & (data_30min['close'] > data_30min['daily_open'])
-    data_30min.loc[~overall_condition, ['buy_signal_1_1', 'buy_signal_2_1', 'buy_signal_2_2', 'buy_signal_3', 'buy_signal_4_1', 'buy_signal_4_2']] = 0
-
-    return data_30min
-
-def avoid_open_position_signals(data_30min):
-    """Generate signals to avoid opening positions based on defined criteria."""
-    # Generate avoid open signals based on specified criteria
-    avoid_open_conditions = (
-        (data_30min['close'] >= data_30min['high'].rolling(window=30).max()) &  # Latest price >= 30min max (MA)
-        (data_30min['bollinger_width'] > data_30min['bollinger_width'].shift(60)) &  # 60min Bollinger Band width is increasing
-        (data_30min['30min_Diff'] > data_30min['30min_Dea']) &  # 30min Diff > Dea
-        (data_30min['30min_Dea'] > data_30min['30min_Dea'].shift(1))  # 30min Dea is in an upward trend
-    )
-
-    # Set buy signal to 0 where avoid open conditions are met
-    data_30min.loc[avoid_open_conditions, 'buy_signal'] = 0
-
-    return data_30min
 
 def calculate_conservative_profit_target(open_price, ma10):
     """Calculate 特别保守版最低盈利目标线."""
@@ -146,64 +45,37 @@ def calculate_holding_time(data):
     data['holding_time'] = holding_time
     return data
 
-def close_position_signals(data_30min):
-    """Generate close position signals based on the defined criteria."""
-    data_30min['conservative_profit_target'] = calculate_conservative_profit_target(
-        data_30min['open'], data_30min['long_ma'])
-
-    data_30min['moving_stop_loss'] = np.nan
-
-    for i in range(1, len(data_30min)):
-        data_30min.loc[data_30min.index[i], 'moving_stop_loss'] = calculate_moving_stop_loss(
-            data_30min['close'].iloc[i], 
-            data_30min['low'].shift(1).iloc[i], 
-            data_30min['long_ma'].shift(1).iloc[i], 
-            data_30min['high'].cummax().iloc[i])
-    
-    data_30min.index = pd.to_datetime(data_30min.index) 
-    data_30min['sell_signal'] = 0
-    
-    # Use the new calculate_holding_time function
-    data_30min = calculate_holding_time(data_30min)
-    data_30min.loc[data_30min['holding_time'] > 15, 'sell_signal'] = -1
-
-    data_30min['sell_signal'] = np.where(
-        (data_30min['close'] >= data_30min['conservative_profit_target']) |
-        (data_30min['close'] <= data_30min['moving_stop_loss']),
-        -1, data_30min['sell_signal']
-    )
-
-    data_30min['sell_signal'] = np.where(
-        (data_30min['close'] > data_30min['moving_stop_loss']) &
-        (data_30min['close'] < data_30min['conservative_profit_target']),
-        -0.5, data_30min['sell_signal']
-    )
-
-    end_of_day = '14:59'
-    data_30min['sell_signal'] = np.where(
-        data_30min.index.time == pd.to_datetime(end_of_day).time(),
-        -1, data_30min['sell_signal']
-    )
-
-    return data_30min
-
 def generate_regime_based_signals(data):
-    """Generate buy/sell signals based on detected market regime."""
-    data['signal'] = 0
-    
-    for regime in data['regime'].unique():
-        regime_data = data[data['regime'] == regime]
+    """Generate buy/sell signals based on market regimes."""
+    data['buy_signal'] = 0
+    data['sell_signal'] = 0
 
-        if regime == 0:  # Trending regime
-            regime_data = strat.generate_signals_trending(regime_data)
-        elif regime == 1:  # Range-bound regime
-            regime_data = strat.generate_signals_range_bound(regime_data)
-        elif regime == 2:  # Volatile regime
-            regime_data = strat.generate_signals_volatile(regime_data)
+    for i in range(len(data)):
+        regime = data['regime'].iloc[i]
 
-        data.loc[data['regime'] == regime, 'signal'] = regime_data['signal']
-    
+        if regime == 0:  # Mean-reversion regime
+            # Generate buy/sell signals using Bollinger Bands
+            if data['close'].iloc[i] < data['bollinger_lower'].iloc[i]:
+                data['buy_signal'].iloc[i] = 1
+            elif data['close'].iloc[i] > data['bollinger_upper'].iloc[i]:
+                data['sell_signal'].iloc[i] = -1
+            
+        elif regime == 1:  # Trending regime
+            # Generate buy/sell signals using moving average crossover
+            if data['short_ma'].iloc[i] > data['long_ma'].iloc[i]:
+                data['buy_signal'].iloc[i] = 1
+            elif data['short_ma'].iloc[i] < data['long_ma'].iloc[i]:
+                data['sell_signal'].iloc[i] = -1
+            
+        elif regime == 2:  # Moderate regime
+            # Apply a more conservative strategy
+            if data['close'].iloc[i] > data['daily_open'].iloc[i] and data['rsi'].iloc[i] > 50:
+                data['buy_signal'].iloc[i] = 1
+            elif data['close'].iloc[i] < data['daily_open'].iloc[i] and data['rsi'].iloc[i] < 50:
+                data['sell_signal'].iloc[i] = -1
+
     return data
+
 
 def ma_strategy(data):
     """Moving Average strategy with regime-based signal generation."""
