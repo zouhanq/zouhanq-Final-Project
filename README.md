@@ -116,6 +116,8 @@ This boxplot shows that in both regimes, median trade returns cluster around zer
 
 ### Cumulative Win Rate over Time
 The line eventually levels off around a steady range, indicating that, on average, the strategy is winning a certain percentage of its trades. For instance, if the line hovers near 0.6, that implies the strategy is winning about 60% of its trades over the observed period.
+
+![Cumulative Win Rate](images/Figure_3.png)
 ```python
 # Code snippet for visualizations
 
