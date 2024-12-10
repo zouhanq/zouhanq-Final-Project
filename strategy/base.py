@@ -40,83 +40,55 @@ def evaluate_strategy(data):
 
 def compose_signal(data):
     """
-    Combine signals
-    :param data: DataFrame
-    :return: DataFrame
+    Ensure that we never sell before we buy. 
+    Adjust this logic if you want to handle half positions as previously.
+    For simplicity, let's only handle full buy and full sell signals here.
     """
-    # Initialize position state
-    position = 0  # 0: no position, 1: full position, 0.5: half position
-
-    # Lists to store signals
-    buy_signals = []
-    sell_signals = []
-
+    position = 0
+    signals = []
     for i in range(len(data)):
-        if data['buy_signal'].iloc[i] == 1 and position == 0:
-            buy_signals.append(1)
-            sell_signals.append(0)
+        sig = data['pred_signal'].iloc[i]
+        
+        if sig == 1 and position == 0:
+            # buy
             position = 1
-        elif data['sell_signal'].iloc[i] == -1 and position == 1:
-            buy_signals.append(0)
-            sell_signals.append(-1)
+            signals.append(1)
+        elif sig == -1 and position == 1:
+            # sell
             position = 0
-        elif data['sell_signal'].iloc[i] == -0.5 and position == 1:
-            buy_signals.append(0)
-            sell_signals.append(-0.5)
-            position = 0.5
-        elif data['sell_signal'].iloc[i] == -0.5 and position == 0.5:
-            buy_signals.append(0)
-            sell_signals.append(-0.5)
-            position = 0
+            signals.append(-1)
         else:
-            buy_signals.append(0)
-            sell_signals.append(0)
-
-    # Add signals back to the DataFrame
-    data['buy_signal'] = buy_signals
-    data['sell_signal'] = sell_signals
-
-    # Combine buy and sell signals into a single signal column
-    data['signal'] = data['buy_signal'] + data['sell_signal']
-
+            # no valid trade
+            signals.append(0)
+    
+    data['signal'] = signals
     return data
+
 
 
 def calculate_prof_pct(data):
     """
-    Calculate single trade returns: opening and closing (for the entire position size)
-    :param data: DataFrame, contains signals and closing prices
-    :return: DataFrame, contains returns for each trade
+    Calculate profit percentage based on signal transitions.
     """
     data['profit_pct'] = np.nan
-    position = 0  # Track the current position size: 1 for full position, 0.5 for half position
-    entry_price = 0  # Track the entry price for the current position
+    position = 0
+    entry_price = 0
 
     for i in range(len(data)):
-        if data['signal'].iloc[i] == 1 and position == 0:
-            # Entering a full position
+        sig = data['signal'].iloc[i]
+        price = data['close'].iloc[i]
+        if sig == 1 and position == 0:
+            # enter long
             position = 1
-            entry_price = data['close'].iloc[i]
-        elif data['signal'].iloc[i] == -0.5 and position == 1:
-            # Exiting half of the position
-            exit_price = data['close'].iloc[i]
-            data['profit_pct'].iloc[i] = (exit_price - entry_price) / entry_price / 2  # Half of the position
-            entry_price = exit_price  # Update entry price for remaining position
-            position = 0.5
-        elif data['signal'].iloc[i] == -1 and position == 1:
-            # Exiting the full position
-            exit_price = data['close'].iloc[i]
-            data['profit_pct'].iloc[i] = (exit_price - entry_price) / entry_price
-            position = 0
-            entry_price = 0
-        elif data['signal'].iloc[i] == -1 and position == 0.5:
-            # Exiting the remaining half position
-            exit_price = data['close'].iloc[i]
-            data['profit_pct'].iloc[i] = (exit_price - entry_price) / entry_price / 2
+            entry_price = price
+        elif sig == -1 and position == 1:
+            # exit long
+            profit = (price - entry_price)/entry_price
+            data['profit_pct'].iloc[i] = profit
             position = 0
             entry_price = 0
 
-    data = data.dropna(subset=['profit_pct'])  # Drop rows where 'profit_pct' is NaN
+    data.dropna(subset=['profit_pct'], inplace=True)
     return data
 
 
