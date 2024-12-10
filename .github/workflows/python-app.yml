@@ -11,30 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+    - name: Check out repository
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'  # Adjust if needed
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
 
-      - name: Install dependencies
-        run: |
-          python -m venv env
-          source env/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: make install
 
-      # Optionally, you can build or run any code build steps here if needed
-      # For example, if you have a Makefile:
-      - name: Build project
-        run: |
-          source env/bin/activate
-          make install
-          make build
-
-      - name: Run tests
-        run: |
-          source env/bin/activate
-          make test
+    - name: Run tests
+      run: make test
