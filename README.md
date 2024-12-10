@@ -47,7 +47,13 @@ python main.py
 ## 3. Data Processing
 
 ### Data Loading and Cleaning
-- **Data Source**: CSI 300 futures minute-level OHLC and volume data stored in data/mink.csv
+- **Data Source**: CSI 300 futures minute-level OHLC and volume data stored in data/mink.csv. Acquiring from www.eastmoney.com
+    - **Time**: The timestamp of the data point, indicating the specific minute.
+    - **open**: The price of the instrument at the start of that minute.
+    - **high**: The highest price reached during that minute.
+    - **low**: The lowest price reached during that minute.
+    - **close**: The final price of the instrument at the end of that minute.
+    - **volume**: The number of contracts or units traded during that minute.
 - **Cleaning**: Checked for missing values and forward-filled any gaps to ensure continuity.
   
 ### Feature Engineering
