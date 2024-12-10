@@ -14,8 +14,8 @@
 
 1. **Clone the repository**:
     ```bash
-    git clone <YOUR-REPO-URL> regime-based-ma-strategy
-    cd regime-based-ma-strategy
+    git clone https://github.com/zouhanq/zouhanq-Final-Project.git
+    cd zouhanq-Final-Project
     ```
 
 2. **Build and Setup Environment using Makefile**:  
