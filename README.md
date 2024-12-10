@@ -1,7 +1,7 @@
 # Regime-Based Moving Average Strategy for CSI 300 Futures
 
 ## 1. Video Presentation Link
-[YouTube Presentation Link] (https://youtu.be/qqXvq-EAmIY)
+[YouTube Presentation Link](https://youtu.be/qqXvq-EAmIY)
 
 ---
 ## 2. How to Build and Run the Code
