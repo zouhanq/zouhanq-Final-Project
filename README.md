@@ -95,12 +95,23 @@ In real-time simulation:
 
 
 ### Backtest Performance
-The cumulative profit over time chart reveals an Approximately +0.07 (7%) on the test data. this return is modest, but reaches the goal of positive return and attain an big improvement comparing to midterm. It shows the limitation of just incorporating MA or related indicators into a quant trading strategy
+#### Performance metrics
+The cumulative profit over time chart reveals an Approximately +0.07 (7%), and the cumulative win rate over time chart reveals an steady state of 60% on the test data. this return is modest, but reaches the goal of positive return and attain an big improvement comparing to midterm. It shows the limitation of just incorporating MA or related indicators into a quant trading strategy.
 
-### Future Improvements
-- Experiment with more sophisticated models (e.g., ensemble methods, SVMs, or neural networks).
-- Fine-tune the feature set, regime detection parameters, and decision thresholds.
-- Incorporate transaction costs and slippage for more realistic performance metrics.
+#### Signal Distribution
+We report the total number of buy and sell signals, providing transparency into the strategy’s frequency of trades.
+
+### Conclusion
+This project demonstrates a full data science lifecycle for a quantitative trading strategy:
+
+- Data Collection and Cleaning
+- Feature Engineering and Dimensionality Reduction
+- Regime Detection with Clustering
+- Predictive Modeling with Decision Trees
+- Incremental, Realistic Backtesting and Performance Evaluation
+
+The results show a modest positive return, suggesting that the combination of regime detection, technical indicators, and supervised learning can offer an edge in this market environment.
+
 
 ## 6. Preliminary Visualizations
 
