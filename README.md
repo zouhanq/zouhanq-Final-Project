@@ -93,7 +93,7 @@ In real-time simulation:
 
 ### Backtesting & Performance Metrics
 - I track cumulative returns by applying each predicted trade to a virtual portfolio, starting at 1.0 factor and adjusting after each closed trade.
-- Final cumulative return is reported after the entire test period.
+- Final cumulative return and cumulative win rate is reported after the entire test period.
 ---
 
 
